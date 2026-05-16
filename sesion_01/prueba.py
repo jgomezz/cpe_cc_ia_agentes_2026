@@ -1,1 +1,7 @@
-print("Hello, World!")
+from dotenv import load_dotenv
+load_dotenv()
+import os
+
+name = os.getenv("NAME")
+
+print("Hello, World! :", name)
