@@ -18,3 +18,23 @@ base_url = os.getenv("LLAMA_BASE_URL","http://localhost:11434")
 llm = OpenAI(
     base_url=base_url + "/v1"
 )
+
+prompt = "¿Cuál es la capital de Francia?"
+
+response = llm.chat.completions.create(
+        model=model,
+        temperature=0.0,
+        max_tokens=1024,
+        messages=[
+            {
+                "role": "system",
+                "content": "Eres un asistente útil. Responde con la mayor precisión posible."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    )
+
+print("Respuesta:", response.choices[0].message.content)
