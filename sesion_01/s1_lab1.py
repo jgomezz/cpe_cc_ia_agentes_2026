@@ -5,4 +5,7 @@ load_dotenv()
 
 name = os.getenv("NAME","Unknown")
 
-print("Hello, World! :", name)
+path = os.getenv("PATH","Unknown")
+
+print("NAME:", name)
+print("PATH:", path)
