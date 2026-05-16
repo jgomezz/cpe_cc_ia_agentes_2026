@@ -1,0 +1,4 @@
+# Ignorar el virtual environment y el archivo de variables de entorno
+.venv
+# Ignorar el archivo de variables de entorno
+.env
