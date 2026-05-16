@@ -1,2 +1,7 @@
 python-dotenv
 openai
+
+# Support Langchain
+langchain 
+langchain-openai 
+langchain-ollama
