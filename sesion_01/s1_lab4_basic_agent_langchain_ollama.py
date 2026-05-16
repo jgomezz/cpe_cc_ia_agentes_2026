@@ -45,3 +45,12 @@ result = basic_agent.invoke(
 
 print(f"Respuesta: {result['messages'][-1].content}")
 
+# Mostrar el historial de mensajes y llamadas a herramientas
+
+for msg in result["messages"]:
+    print(f"\n[{msg.type.upper()}]")
+    if hasattr(msg, 'tool_calls') and msg.tool_calls:
+        for tc in msg.tool_calls:
+            print(f"  → Tool call: {tc['name']}({tc['args']})")
+    if hasattr(msg, 'content') and msg.content:
+        print(f"  {msg.content[:200]}")
