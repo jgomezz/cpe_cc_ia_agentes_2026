@@ -23,6 +23,14 @@ from langchain_core.tools import tool
 # Creacion de funciones para el agente
 
 @tool
+def obtener_informacion_Tecsup(query:str) -> str:
+    """
+    Contiene información sobre TECSUP.
+    """
+    # Aquí podrías implementar una consulta real a una base de datos o API
+    return "TECSUP es una institución educativa peruana especializada en carrearas técnica y cursos especializados fundadda en 1984"
+
+@tool
 def calcular(expresion:str) -> str:
     """
     Calcula el resultado de una expresión matemática.
@@ -36,15 +44,24 @@ def calcular(expresion:str) -> str:
 
 basic_agent = create_agent(
     model = llm,
-    tools = [calcular],
+    tools = [ 
+                calcular ,
+                obtener_informacion_Tecsup
+            ],
     )
 
 result = basic_agent.invoke(
     {"messages": [("human", "¿Cuánto es 4827 * 3961?")]}
 )
-
 print(f"Respuesta: {result['messages'][-1].content}")
 
+result = basic_agent.invoke(
+    {"messages": [("human", "Dame información de TECSUP")]}
+)
+print(f"Respuesta: {result['messages'][-1].content}")
+
+
+'''
 # Mostrar el historial de mensajes y llamadas a herramientas
 
 for msg in result["messages"]:
@@ -54,3 +71,5 @@ for msg in result["messages"]:
             print(f"  → Tool call: {tc['name']}({tc['args']})")
     if hasattr(msg, 'content') and msg.content:
         print(f"  {msg.content[:200]}")
+
+'''
