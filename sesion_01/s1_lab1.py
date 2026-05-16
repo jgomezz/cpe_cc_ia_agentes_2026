@@ -11,8 +11,8 @@ print("PATH:", path)
 
 from openai import OpenAI
 
-model = os.getenv("LLAMA_MODEL","llama3.1:8b")
-base_url = os.getenv("LLAMA_BASE_URL","http://localhost:11434")
+model = os.getenv("OLLAMA_MODEL","llama3.1:8b")
+base_url = os.getenv("OLLAMA_BASE_URL","http://localhost:11434")
 
 
 llm = OpenAI(
