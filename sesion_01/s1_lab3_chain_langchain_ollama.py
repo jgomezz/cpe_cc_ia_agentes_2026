@@ -17,16 +17,18 @@ llm = ChatOllama(
 )
 
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
 # Uso de Chain con Langchain Ollama
 
 prompt = ChatPromptTemplate.from_messages([
-    ("system", "Eres un asistente experto en {tema}. Responde en español y sé conciso."),
+    ("system", "Eres un asistente experto en {tema}. Responde en español y sé conciso. y devuleve la respuesta en formato JSON"),
     ("human", "{pregunta}")
 ])
 
 chain = prompt | llm | StrOutputParser()
+#chain = prompt | llm | JsonOutputParser()
 
 respuesta = chain.invoke({
     "tema": "geografía",
@@ -41,3 +43,5 @@ respuesta = chain.invoke({
 })
 
 print("Respuesta:", respuesta)
+
+# Ejercicio , generar 3 pregunta realizadas en una lista y hacer las consultas a la IA 
