@@ -15,6 +15,7 @@ llm = ChatOpenAI(
 )
 
 prompt = "¿Cuál es la capital de Francia?"
+prompt = "¿Cuánto es 4,827 × 3,961?"
 
 reponse = llm.invoke(prompt)
 

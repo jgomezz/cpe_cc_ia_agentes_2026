@@ -17,6 +17,8 @@ llm = ChatOllama(
 )
 
 prompt = "¿Cuál es la capital de Francia?"
+prompt = "¿Cuánto es 4,827 × 3,961?"
+prompt = "Enviame un correo indicando hola mundo a jgomez@google.com"
 
 reponse = llm.invoke(prompt)
 
