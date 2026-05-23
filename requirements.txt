@@ -7,5 +7,7 @@ langchain-openai
 langchain-ollama
 
 # Sesion 02
+numpy
 langchain_community
 langchain-text-splitters
+ 

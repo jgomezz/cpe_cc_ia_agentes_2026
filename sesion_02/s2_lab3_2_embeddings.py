@@ -15,6 +15,26 @@ def load_document(archivo):
     return documentos
 
 
+
+import numpy as np
+
+# Funciones utilitarias
+
+# ── Función de similitud coseno ─────────────────────────────
+def similitud(v1, v2):
+    """Mide qué tan similares son dos vectores (1.0 = idénticos)."""
+    return np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+
+
+def buscar(embeddings_model, query: str, top_k: int = 3):
+    """Encuentra los chunks más parecidos a una pregunta."""
+    q_vec = embeddings_model.embed_query(query)
+    scored = [(similitud(q_vec, v), i) for i, v in enumerate(vectores)]
+    scored.sort(reverse=True)
+    return scored[:top_k]
+
+
+
 if __name__ == "__main__":
 
 
@@ -46,3 +66,13 @@ if __name__ == "__main__":
     vectores = embedding_model.embed_documents([c.page_content for c in chunks] )
 
     print(f" {len(vectores)} vectores · {len(vectores[0])} dimensiones cada uno\n")
+
+    # 4. EVALUAR EMBEDDING
+
+    query = "¿Cuanto cuesta el plan Pro?"
+
+    for  score, idx  in  buscar(embedding_model, query) :
+    
+        fuente = chunks[idx].metadata["source"].split("/")[-1]
+        preview = chunks[idx].page_content[:100].replace("\n", " ")
+        print(f"  {score:.3f} chunks[{idx}]  [{fuente}]  {preview}...")
