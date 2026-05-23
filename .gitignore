@@ -2,3 +2,6 @@
 .venv
 # Ignorar el archivo de variables de entorno
 .env
+
+# 
+qdrant_storage/

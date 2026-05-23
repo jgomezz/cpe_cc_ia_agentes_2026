@@ -5,6 +5,12 @@ from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from langchain_openai import OpenAIEmbeddings
+
+from qdrant_client import QdrantClient
+from langchain_qdrant import QdrantVectorStore
+
+import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -65,7 +71,7 @@ if __name__ == "__main__":
     print(f" {len(vectores)} vectores · {len(vectores[0])} dimensiones cada uno\n")
 
     # 4. EVALUAR EMBEDDING
-
+    """
     query = "¿Cuanto cuesta el plan Pro?"
 
     for  score, idx  in  buscar(embedding_model, query) :
@@ -73,3 +79,24 @@ if __name__ == "__main__":
         fuente = chunks[idx].metadata["source"].split("/")[-1]
         preview = chunks[idx].page_content[:100].replace("\n", " ")
         print(f"  {score:.3f} chunks[{idx}]  [{fuente}]  {preview}...")
+    """
+
+    # 5. CARGAR VECTORES A QDRANT
+
+    COLLECTION = os.getenv("QDRANT_COLLECTION", "Planes_Telefonos_Doc")
+
+    client = QdrantClient(
+        url=os.getenv("QDRANT_URL", "http://localhost:6333"),
+    )
+
+    if client.collection_exists(COLLECTION):
+        client.delete_collection(COLLECTION)
+        print(f" Colección anterior '{COLLECTION}' borrada\n")
+
+
+    vectorstore = QdrantVectorStore.from_documents(
+        documents=chunks,
+        embedding=embedding_model,
+        url=os.getenv("QDRANT_URL", "http://localhost:6333"),
+        collection_name=COLLECTION,
+    )

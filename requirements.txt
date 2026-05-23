@@ -10,4 +10,5 @@ langchain-ollama
 numpy
 langchain_community
 langchain-text-splitters
- 
+langchain-qdrant
+qdrant-client
