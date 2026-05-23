@@ -5,13 +5,14 @@ from langchain_openai import ChatOpenAI
 
 load_dotenv()
 
-model = os.getenv("OLLAMA_MODEL","llama3.1:8b")
-base_url = os.getenv("OLLAMA_BASE_URL","http://localhost:11434")
 
 # Conexion con Ollama
 from langchain_ollama import ChatOllama
 
 """
+model = os.getenv("OLLAMA_MODEL","llama3.1:8b")
+base_url = os.getenv("OLLAMA_BASE_URL","http://localhost:11434")
+
 llm = ChatOllama(
     model=model,
     base_url=base_url,
@@ -23,7 +24,6 @@ model = os.getenv("OPENAI_MODEL","gpt-4o-mini")
 
 llm = ChatOpenAI(
     model=model,
-    
     temperature=0.0,
 )
 
@@ -79,7 +79,6 @@ SYSTEM_PROMPT = """
 
     ## RESTRICCIONES:
     - No inventes información. Si no sabes la respuesta, di que no lo sabes.
-
 
     """
 
