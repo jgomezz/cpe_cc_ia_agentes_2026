@@ -2,6 +2,7 @@
 from pathlib import Path
 
 from langchain_community.document_loaders import TextLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 def load_document(archivo):
@@ -25,9 +26,11 @@ if __name__ == "__main__":
 
     print(f"Total de documentos cargados: {len(documentos)}")
 
-    print(documentos[0].page_content[:500])  # Imprime los primeros 500 caracteres del primer documento
+    #print(documentos[0].page_content[:500])  # Imprime los primeros 500 caracteres del primer documento
 
     # 2. FRAGMENTAR EN CHUNKS
 
+    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    chunks = splitter.split_documents(documentos)
 
-
+    print(f"Total de chunks generados: {len(chunks)}")  
