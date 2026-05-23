@@ -2,9 +2,9 @@ from dotenv import load_dotenv
 import os
 
 from langchain_openai import ChatOpenAI
+from model import get_llm
 
 load_dotenv()
-
 
 # Conexion con Ollama
 from langchain_ollama import ChatOllama
@@ -20,12 +20,17 @@ llm = ChatOllama(
 )
 """
 
+"""
+
 model = os.getenv("OPENAI_MODEL","gpt-4o-mini")
 
 llm = ChatOpenAI(
     model=model,
     temperature=0.0,
 )
+"""
+
+llm = get_llm(name="openai")
 
 
 # Creacion de un agente basico con Langchain Ollama
