@@ -4,6 +4,10 @@ from pathlib import Path
 from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+from langchain_openai import OpenAIEmbeddings
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def load_document(archivo):
     loader = TextLoader(archivo)
@@ -36,3 +40,5 @@ if __name__ == "__main__":
     print(f"Total de chunks generados: {len(chunks)}")  
 
     # 3. CREAR EMBEDDINGS
+
+    embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
