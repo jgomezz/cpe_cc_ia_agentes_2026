@@ -66,7 +66,7 @@ graph = StateGraph(MessagesState)
 
 # Agregar nodos
 graph.add_node("reasoning", reasoning)
-graph.add_node("tools", tool_executer)
+graph.add_node("node_tools", tool_executer)
 
 # Definir el inicio del grafo
 graph.set_entry_point("reasoning")
@@ -76,12 +76,12 @@ graph.add_conditional_edges(
     "reasoning",  # Nodo de razonamiento
     decision_logic,  # Lógica de decisión
     {
-        "tools": "tools",  # Si la lógica decide usar herramientas, ir al nodo "tools"
+        "tools": "node_tools",  # Si la lógica decide usar herramientas, ir al nodo "tools"
         "end" : END        # Si la lógica decide no usar herramientas, terminar el grafo
     }
 )
 
-graph.add_edge("tools", "reasoning")  # Después de ejecutar la herramienta, volver al nodo de razonamiento
+graph.add_edge("node_tools", "reasoning")  # Después de ejecutar la herramienta, volver al nodo de razonamiento
 
 # Compilar el grafo
 agent = graph.compile()
@@ -90,6 +90,7 @@ agent = graph.compile()
 if __name__ == "__main__":
     query = "¿Cuál es el tipo de cambio del dolar hoy?"
     
+    query = "¿Cuál es la temperatura de hoy?"
     '''
     response = get_exchange_rate(query)
     print(response)
