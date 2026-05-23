@@ -17,7 +17,27 @@ def get_exchange_rate(query:str) -> str:
     data = requests.get(url).json()
     return data["periods"][-1]["values"][0]
 
-tools = [get_exchange_rate]
+@tool
+def python_repl(code: str) -> str:
+    """Ejecuta código Python y retorna el resultado.
+    Usar para cálculos matemáticos, conversiones, procesamiento de datos.
+    El código debe asignar el resultado a una variable llamada 'resultado'."""
+    try:
+        local_vars = {}
+        
+        exec(code, {"__builtins__": __builtins__}, local_vars)
+
+        if "resultado" in local_vars:
+            return str(local_vars["resultado"])
+        
+        return "Código ejecutado. Define una variable 'resultado' para ver el output."
+    
+    except Exception as e:
+        return f"Error al ejecutar código: {e}"
+
+
+
+tools = [get_exchange_rate,python_repl]
 
 llm = get_llm(name="ollama")
 
@@ -31,6 +51,9 @@ SYSTEM_PROMPT = """
     
     ## HERRAMIENTAS DISPONIBLES:
     1.- Usa get_exchange_rate para informacion sobre el tipo de cambio del dolar en soles peruanos. 
+    2. Usa python_repl para cálculos. Asigna el resultado a la variable 'resultado'.
+    3. Puedes usar MÚLTIPLES herramientas en secuencia para resolver tareas complejas.
+    4. Explica tu razonamiento paso a paso.
 
 """
 
@@ -100,9 +123,13 @@ agent = graph.compile()
 
 
 if __name__ == "__main__":
-    query = "¿Cuál es el tipo de cambio del dolar hoy?"
+    
+    # query = "¿Cuál es el tipo de cambio del dolar hoy?"
     
     # query = "¿Cuál es la temperatura de hoy?"
+    
+    query = "Busca el precio actual del dolar y calcula cuánto valen 3.5 dolares en soles"
+    
     '''
     response = get_exchange_rate(query)
     print(response)
