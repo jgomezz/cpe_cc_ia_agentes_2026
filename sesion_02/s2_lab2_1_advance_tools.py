@@ -1,4 +1,5 @@
 from langchain_core.tools import tool
+from langchain_core.messages import SystemMessage
 from langgraph.graph import END, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode
 import requests
@@ -23,7 +24,15 @@ llm = get_llm(name="ollama")
 llm_with_tools = llm.bind_tools(tools)
 
 
-# LangGraph
+# Definir el SYSTEM PROMPT para el agente
+
+SYSTEM_PROMPT = """
+    Eres un asistente experto en economia y finanzas. Responde en español y sé conciso. 
+    
+    ## HERRAMIENTAS DISPONIBLES:
+    1.- Usa get_exchange_rate para informacion sobre el tipo de cambio del dolar en soles peruanos. 
+
+"""
 
 
 # ----------------------------------------
@@ -36,6 +45,9 @@ def reasoning(state: MessagesState) -> dict:
         Nodo de razonamiento que decide qué herramienta usar en base a la consulta del usuario
     """
     messages = state["messages"]
+
+    if not any(isinstance(m, SystemMessage) for m in messages):
+        messages = [SystemMessage(content=SYSTEM_PROMPT)] + messages
 
     reponse = llm_with_tools.invoke(messages)
 
@@ -90,7 +102,7 @@ agent = graph.compile()
 if __name__ == "__main__":
     query = "¿Cuál es el tipo de cambio del dolar hoy?"
     
-    query = "¿Cuál es la temperatura de hoy?"
+    # query = "¿Cuál es la temperatura de hoy?"
     '''
     response = get_exchange_rate(query)
     print(response)
