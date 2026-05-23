@@ -1,0 +1,18 @@
+Guía de Administración de Servidores - CloudTech
+
+1. Monitoreo de Recursos
+Los clientes pueden monitorear el uso de CPU, memoria RAM y almacenamiento desde el Panel de Control en la sección "Métricas". Las alertas automáticas se activan cuando el uso de CPU supera el 80% o la memoria supera el 90% durante más de 5 minutos consecutivos.
+
+2. Reinicio de Servicios
+Para reiniciar un servicio web (nginx o Apache), acceda al Panel de Control, seleccione su servidor y haga clic en "Reiniciar Servicio". El proceso toma entre 2 y 5 minutos. Durante el reinicio, el sitio web no estará disponible.
+
+Importante: Se recomienda programar los reinicios fuera del horario pico de tráfico. Los planes Pro y Enterprise incluyen reinicio sin downtime (zero-downtime restart).
+
+3. Backups
+Los backups automáticos se realizan diariamente para planes Pro y Enterprise, y semanalmente para el plan Básico. Los backups se almacenan durante 30 días. Para restaurar un backup, vaya a Panel de Control, sección "Backups", seleccione la fecha deseada y haga clic en "Restaurar". El proceso toma entre 15 y 30 minutos dependiendo del tamaño.
+
+4. Escalamiento
+Cuando los recursos de un servidor son insuficientes, el cliente puede escalar verticalmente (más CPU/RAM) o horizontalmente (más servidores). El escalamiento vertical se aplica en menos de 10 minutos sin downtime. El escalamiento horizontal requiere configuración de balanceador de carga y está disponible solo en planes Enterprise.
+
+5. Seguridad
+Todos los servidores incluyen firewall básico y protección DDoS. Los planes Pro y Enterprise incluyen WAF (Web Application Firewall) y escaneo de vulnerabilidades semanal. Los certificados SSL son gratuitos y se renuevan automáticamente con Let's Encrypt.

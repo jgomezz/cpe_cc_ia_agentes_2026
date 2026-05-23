@@ -1,0 +1,9 @@
+Política de Reembolsos de CloudTech
+
+CloudTech ofrece reembolso completo dentro de los primeros 30 días de contratación de cualquier plan. Para solicitar un reembolso, el cliente debe enviar un correo a facturacion@cloudtech.com indicando su ID de cliente y el motivo de la solicitud.
+
+Los reembolsos se procesan dentro de 15 días hábiles. Una vez procesado, el monto se devuelve al método de pago original. Si el cliente ha utilizado más del 50% de los recursos incluidos en su plan, el reembolso será proporcional al uso restante.
+
+No se otorgan reembolsos después de los 30 días iniciales. Sin embargo, el cliente puede cancelar su plan en cualquier momento y este permanecerá activo hasta el final del período de facturación actual.
+
+Para cambios de plan (upgrade o downgrade), el ajuste se aplica de inmediato y la diferencia se prorratea en la siguiente factura. Los upgrades no tienen costo adicional de migración. Los downgrades pueden implicar pérdida de funcionalidades premium.

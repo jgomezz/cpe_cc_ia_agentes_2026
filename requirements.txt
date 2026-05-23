@@ -5,3 +5,7 @@ openai
 langchain 
 langchain-openai 
 langchain-ollama
+
+# Sesion 02
+langchain_community
+langchain-text-splitters

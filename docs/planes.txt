@@ -1,0 +1,14 @@
+Planes y Precios de CloudTech
+
+Plan Básico - $9.99/mes
+Incluye: 1 servidor compartido, 10GB almacenamiento, 100GB transferencia mensual, 1 dominio, certificado SSL gratuito, backup semanal, soporte por email (respuesta en 24h).
+
+Plan Pro - $29.99/mes
+Incluye: 1 servidor dedicado, 50GB almacenamiento SSD, 500GB transferencia mensual, 5 dominios, certificado SSL gratuito, backup diario, soporte por email y chat (respuesta en 4h), reinicio sin downtime, monitoreo avanzado.
+
+Plan Enterprise - $99.99/mes
+Incluye: servidores dedicados ilimitados, 500GB almacenamiento SSD, transferencia ilimitada, dominios ilimitados, certificado SSL wildcard, backup diario con retención de 90 días, soporte prioritario 24/7 (respuesta en 1h), reinicio sin downtime, balanceador de carga, WAF, escaneo de vulnerabilidades, migración asistida gratuita.
+
+Todos los planes incluyen: panel de control, métricas básicas, firewall, protección DDoS, 99.9% SLA de uptime garantizado.
+
+Descuentos: Pago anual tiene 20% de descuento. Ejemplo: Plan Pro anual = $29.99 x 12 x 0.80 = $287.90/año (equivale a $23.99/mes).
