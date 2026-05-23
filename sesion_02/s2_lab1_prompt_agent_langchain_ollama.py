@@ -28,14 +28,35 @@ def obtener_informacion_Tecsup(query:str) -> str:
     Contiene información sobre TECSUP.
     """
     # Aquí podrías implementar una consulta real a una base de datos o API
-    return "TECSUP es una institución educativa peruana especializada en carrearas técnica y cursos especializados fundadda en 1984"
+    return "TECSUP (Tecnológico Superior) es una institución educativa peruana especializada en carrearas técnica y cursos especializados fundadda en 1984"
 
+
+# SYSTEM PROMPT
+
+SYSTEM_PROMPT = """
+    Eres TecsupGPT un asistente útil usado para ayudar a las consultas relacionadas con TECSUP. 
+    Responde con la mayor precisión posible.
+
+    ## HERRAMIENTAS DISPONIBLES:
+    
+    1. obtener_informacion_Tecsup(query:str)
+      Contiene información sobre TECSUP. Usalo para preguntas sobre historia, carreras, cursos, etc.
+
+    ## FORMATO DE RESPUESTA:
+    Responder siempre en castellano
+
+    ## RESTRICCIONES:
+    - No inventes información. Si no sabes la respuesta, di que no lo sabes.
+
+
+    """
 
 basic_agent = create_agent(
     model = llm,
     tools = [ 
                 obtener_informacion_Tecsup,
             ],
+    system_prompt=SYSTEM_PROMPT,
     )
 
 
