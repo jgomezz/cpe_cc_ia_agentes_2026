@@ -42,3 +42,7 @@ if __name__ == "__main__":
     # 3. CREAR EMBEDDINGS
 
     embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
+
+    vectores = embedding_model.embed_documents([c.page_content for c in chunks] )
+
+    print(f" {len(vectores)} vectores · {len(vectores[0])} dimensiones cada uno\n")
