@@ -1,0 +1,21 @@
+# docker-compose.yml — Qdrant local con persistencia
+# Levantar:  docker compose up -d
+# Apagar:    docker compose down
+# Ver logs:  docker compose logs -f qdrant
+# Dashboard: http://localhost:6333/dashboard
+
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"   # REST API + Dashboard web
+      - "6334:6334"   # gRPC (opcional, más rápido)
+    volumes:
+      - ./qdrant_storage:/qdrant/storage   # Persistencia en disco
+#    environment:
+#      QDRANT__SERVICE__API_KEY: ${QDRANT_API_KEY}
+#      # Opcional: read-only key separada
+#      QDRANT__SERVICE__READ_ONLY_API_KEY: ${QDRANT_READ_ONLY_API_KEY}
+# Datos persisten en ./qdrant_storage/ — borrar esa carpeta = reset total
