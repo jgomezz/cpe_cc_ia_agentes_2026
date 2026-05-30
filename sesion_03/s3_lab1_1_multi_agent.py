@@ -332,10 +332,10 @@ if __name__ == "__main__":
     preguntas = [
         "¿Cuáles son las notas del estudiante T20232?",              # → estudiantes
         "¿Cuál es el horario del docente D1001?",                    # → docentes
-        "¿Qué requisitos hay para la beca Institución Educativa?",                  # → coordinacion
-        "Quiero registrar nota 17 a T20231 en Programación I.",      # → docentes
-        "¿Qué carreras ofrece Institución Educativa en el área de software?",       # → coordinacion
-        "¿Cuál es la asistencia de T20233 en Cálculo?",              # → estudiantes
+#        "¿Qué requisitos hay para la beca Institución Educativa?",                  # → coordinacion
+#        "Quiero registrar nota 17 a T20231 en Programación I.",      # → docentes
+#        "¿Qué carreras ofrece Institución Educativa en el área de software?",       # → coordinacion
+#        "¿Cuál es la asistencia de T20233 en Cálculo?",              # → estudiantes
     ]
 
     print("═" * 60)
