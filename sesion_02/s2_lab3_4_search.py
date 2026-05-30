@@ -46,10 +46,17 @@ info = client.get_collection(QDRANT_COLLECTION)
 print(f"✅ Conectado a Qdrant: {info.points_count} vectores en '{QDRANT_COLLECTION}'\n")
 
 
+# ── Dos retrievers para comparar ────────────────────────────
 similarity_retriever = vectorstore.as_retriever(
     search_type="similarity",
     search_kwargs={"k": 3},
 )
+
+mmr_retriever = vectorstore.as_retriever(
+    search_type="mmr",
+    search_kwargs={"k": 3, "fetch_k": 10},   # busca 10, elige 3 diversos
+)
+
 
 # ── Comparar lado a lado ────────────────────────────────────
 queries = [
@@ -66,5 +73,11 @@ for q in queries:
     print("\n📊 SIMILARITY  (los 3 más parecidos):")
     for i, doc in enumerate(similarity_retriever.invoke(q), 1):
         fuente = doc.metadata["source"].split("/")[-1]
-        preview = doc.page_content[:70].replace("\n", " ")
+        preview = doc.page_content[:100].replace("\n", " ")
+        print(f"  {i}. [{fuente}] {preview}...")
+
+    print("\n🎯 MMR  (relevantes Y diversos):")
+    for i, doc in enumerate(mmr_retriever.invoke(q), 1):
+        fuente = doc.metadata["source"].split("/")[-1]
+        preview = doc.page_content[:100].replace("\n", " ")
         print(f"  {i}. [{fuente}] {preview}...")
