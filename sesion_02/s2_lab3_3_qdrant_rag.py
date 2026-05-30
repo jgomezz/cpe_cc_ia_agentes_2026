@@ -5,6 +5,7 @@ from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from langchain_openai import OpenAIEmbeddings
+from langchain_ollama import OllamaEmbeddings
 
 from qdrant_client import QdrantClient
 from langchain_qdrant import QdrantVectorStore
@@ -64,7 +65,19 @@ if __name__ == "__main__":
 
     # 3. CREAR EMBEDDINGS
 
-    embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
+    base_url = os.getenv("OLLAMA_BASE_URL","http://localhost:11434")
+
+    # Opción A: OpenAI
+    # embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
+
+    # Opción B: Ollama
+    # embedding_model = OllamaEmbeddings(model="nomic-embed-text", base_url=base_url)
+
+    # Opción C: Ollama bge-m3
+    embedding_model = OllamaEmbeddings(model="bge-m3", base_url=base_url)
+
+    # Opción D: Ollama qwen3-embedding:4b
+    # embedding_model = OllamaEmbeddings(model="qwen3-embedding:4b", base_url=base_url)
 
     vectores = embedding_model.embed_documents([c.page_content for c in chunks] )
 
@@ -77,26 +90,28 @@ if __name__ == "__main__":
     for  score, idx  in  buscar(embedding_model, query) :
     
         fuente = chunks[idx].metadata["source"].split("/")[-1]
-        preview = chunks[idx].page_content[:100].replace("\n", " ")
+        preview = chunks[idx].page_content[:20].replace("\n", " ")
         print(f"  {score:.3f} chunks[{idx}]  [{fuente}]  {preview}...")
     """
 
     # 5. CARGAR VECTORES A QDRANT
 
-    COLLECTION = os.getenv("QDRANT_COLLECTION", "Planes_Telefonos_Doc")
+
+    QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "Planes_Telefonos_Doc")
+    QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 
     client = QdrantClient(
-        url=os.getenv("QDRANT_URL", "http://localhost:6333"),
+        url=QDRANT_URL,
     )
 
-    if client.collection_exists(COLLECTION):
-        client.delete_collection(COLLECTION)
-        print(f" Colección anterior '{COLLECTION}' borrada\n")
+    if client.collection_exists(QDRANT_COLLECTION):
+        client.delete_collection(QDRANT_COLLECTION)
+        print(f" Colección anterior '{QDRANT_COLLECTION}' borrada\n")
 
 
     vectorstore = QdrantVectorStore.from_documents(
         documents=chunks,
         embedding=embedding_model,
-        url=os.getenv("QDRANT_URL", "http://localhost:6333"),
-        collection_name=COLLECTION,
+        url=QDRANT_URL,
+        collection_name=QDRANT_COLLECTION,
     )
