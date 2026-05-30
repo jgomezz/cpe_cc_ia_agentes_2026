@@ -306,7 +306,7 @@ graph.add_edge("coordinacion", END)
 
 agent = (
     graph.compile(checkpointer=MemorySaver())
-         .with_config({"recursion_limit": 20})
+         .with_config({"recursion_limit": 15})
 )
 
 
