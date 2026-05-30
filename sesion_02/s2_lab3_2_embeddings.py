@@ -5,6 +5,9 @@ from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from langchain_openai import OpenAIEmbeddings
+from langchain_ollama import OllamaEmbeddings
+
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -58,7 +61,20 @@ if __name__ == "__main__":
 
     # 3. CREAR EMBEDDINGS
 
-    embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
+
+    base_url = os.getenv("OLLAMA_BASE_URL","http://localhost:11434")
+
+    # Opción A: OpenAI
+    # embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
+
+    # Opción B: Ollama
+    # embedding_model = OllamaEmbeddings(model="nomic-embed-text", base_url=base_url)
+
+    # Opción C: Ollama bge-m3
+    embedding_model = OllamaEmbeddings(model="bge-m3", base_url=base_url)
+
+    # Opción D: Ollama qwen3-embedding:4b
+    # embedding_model = OllamaEmbeddings(model="qwen3-embedding:4b", base_url=base_url)
 
     vectores = embedding_model.embed_documents([c.page_content for c in chunks] )
 
@@ -71,5 +87,22 @@ if __name__ == "__main__":
     for  score, idx  in  buscar(embedding_model, query) :
     
         fuente = chunks[idx].metadata["source"].split("/")[-1]
-        preview = chunks[idx].page_content[:100].replace("\n", " ")
+        preview = chunks[idx].page_content[:20].replace("\n", " ")
         print(f"  {score:.3f} chunks[{idx}]  [{fuente}]  {preview}...")
+
+
+
+    print("═" * 60)
+    print("  Similitud entre frases parafraseadas")
+    print("═" * 60)
+
+    pares = [
+        ("servidor caído",   "mi server no funciona"),
+        ("¿cuánto cuesta?",  "precio del plan"),
+        ("servidor caído",   "política de reembolso"),
+    ]
+
+    for a, b in pares:
+        s = similitud(embedding_model.embed_query(a), embedding_model.embed_query(b))
+        icon = "🟢" if s > 0.7 else "🟡" if s > 0.4 else "🔴"
+        print(f"  {icon} {s:.3f}  '{a}'  ↔  '{b}'")
