@@ -5,3 +5,8 @@
 
 # 
 qdrant_storage/
+
+# 
+memoria_agente.*
+
+.DS_Store
