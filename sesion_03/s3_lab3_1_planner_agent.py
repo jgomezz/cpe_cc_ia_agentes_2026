@@ -82,7 +82,7 @@ class PlannerState(TypedDict):
 # ═══════════════════════════════════════════════════════════
 # NODO 1: PLAN  (descompone la tarea)
 # ═══════════════════════════════════════════════════════════
-PLAN_PROMPT = """
+NODO_PLAN_PROMPT = """
 Eres un planificador experto en tareas académicas. 
 descompones la tarea del usuario en 3 pasos.
 Sigue un formato exacto:
@@ -97,11 +97,12 @@ def planner_node(state: PlannerState)-> dict:
     
     user_message = state["messages"][-1].content
 
-    reponse = llm.invoke([
-            SystemMessage(content=PLAN_PROMPT),
+    messages = [
+            SystemMessage(content=NODO_PLAN_PROMPT),
             HumanMessage(content=user_message),
+    ]
 
-    ])
+    reponse = llm.invoke(messages)
 
     plan = reponse.content
 
@@ -115,15 +116,30 @@ def planner_node(state: PlannerState)-> dict:
 # ═══════════════════════════════════════════════════════════
 # NODO 2: EXECUTE  (ejecuta el plan)
 # ═══════════════════════════════════════════════════════════
-def executor_node(state)-> dict:
-    pass
+NODO_EXECUTE_PROMPT = """
+Eres un ejecutor de tareas académicas. 
+Ejecuta el plan generado por el nodo planificador.
+Usa las tools disponibles
+- consultar_estudiante : para obtener datos del alumno
+- consultar_normativa : para obtener normativas académicas
+- calculadora : para cálculos matemáticos
+Al final, da una respuesta completa con conclusiones y recomendaciones para el estudiante.
+"""
 
-# ═══════════════════════════════════════════════════════════
-# NODO 3: REFLECT  (reflexiona sobre el plan)
-# ═══════════════════════════════════════════════════════════
-def reflection_node(state)-> dict:
-    pass
+def executor_node(state: PlannerState)-> dict:
+    """El nodo ejecutor recibe el plan generado y lo ejecuta usando el LLM con herramientas."""
 
+    # El mensaje para el nodo ejecutor incluye el plan generado por el nodo planificador y el mensaje original del usuario
+    messages = [
+        SystemMessage(content=NODO_EXECUTE_PROMPT),
+        *state["messages"],
+    ]
+
+    # El LLM con herramientas ejecuta el plan, llamando a tools si es necesario
+    reponse = llm_with_tools.invoke(messages)
+
+    return {
+        "messages": [reponse]}
 
 def should_use_tools(state: PlannerState) -> str:
     """Si el LLM pidió tools, ir a tools. Si no, ir a reflexión."""
@@ -131,6 +147,36 @@ def should_use_tools(state: PlannerState) -> str:
     if hasattr(last, "tool_calls") and last.tool_calls:
         return "tools"
     return "reflect"
+
+
+# ═══════════════════════════════════════════════════════════
+# NODO 3: REFLECT  (reflexiona sobre el plan)
+# ═══════════════════════════════════════════════════════════
+NODO_REFLECT_PROMPT = """
+Eres un reflexionador de tareas académicas, evalua la respuesta del nodo ejecutor.
+1. Se completo todos los pasos del plan?
+2. La respuesta es clara y útil para un decision academica?
+3. Si la respuesta es incompleta o confusa, sugiere ajustes al plan.
+Responde SOLO con "APROBADO" si el plan fue exitoso, o "CORREGIR" si falta información e indicar que falta.
+"""
+def reflection_node(state: PlannerState)-> dict:
+    """ El nodo de reflexión recibe la respuesta del nodo ejecutor y evalúa si el plan fue exitoso o si se necesitan ajustes."""
+    last_response = state["messages"][-1].content
+    plan = state.get("plan", "")
+
+    messages = [
+        SystemMessage(content=NODO_REFLECT_PROMPT),
+        HumanMessage(content=f"Plan: {plan}\n\nRespuesta: {last_response}") ,
+    ]
+
+    reponse = llm.invoke(messages)
+
+    if "APROBADO" in reponse.content.upper():
+        return {"reflection": "approved"}
+    else:        
+        return {"reflection": "needs_correction",
+                "messages": HumanMessage(content=f"El plan necesita correcciones: {reponse.content}")   }
+
 
 def route_after_reflection(state: PlannerState) -> str:
     return "end" if state.get("reflection") == "approved" else "executor"
@@ -164,3 +210,14 @@ agent = graph.compile().with_config({"recursion_limit": 25})
 # VISUALIZAR GRAFO
 # ═══════════════════════════════════════════════════════════
 print(agent.get_graph().draw_mermaid())
+
+
+
+if __name__ == "__main__":
+    # Simular una consulta académica compleja
+    
+    tarea = ("Analiza la situación académica del estudiante T20233.")
+
+    result = agent.invoke({"messages": [("human", tarea)]})
+
+    print(f"\nRespuesta final del agente:\n{result['messages'][-1].content}")
