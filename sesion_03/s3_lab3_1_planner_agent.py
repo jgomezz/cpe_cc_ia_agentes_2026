@@ -66,7 +66,7 @@ tools = [consultar_estudiante, consultar_normativa, calculadora]
 # LLM
 # ═══════════════════════════════════════════════════════════
 
-llm = get_llm("ollama")
+llm = get_llm("openai")
 llm_with_tools = llm.bind_tools(tools)
 
 
