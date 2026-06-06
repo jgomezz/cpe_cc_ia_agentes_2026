@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from fastapi import FastAPI
 import uvicorn
-from model import get_llm
+from model import get_llm, get_llm_optimized
 from langchain.agents import create_agent
 
 '''
@@ -23,7 +23,8 @@ curl -X POST http://localhost:8000/chat/stream \
 # ════════════════════════════════════════════════════════════
     
 
-llm = get_llm("ollama")
+# llm = get_llm("ollama")
+llm = get_llm_optimized("openai")
 agent = create_agent(llm)
 
 
