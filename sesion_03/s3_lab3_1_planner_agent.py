@@ -126,8 +126,9 @@ Ejecuta el plan paso a paso. Usa :
 Al final, da una respuesta completa con conclusiones.
 """
 
+
 def executor_node(state: PlannerState)-> dict:
-    """El nodo ejecutor recibe el plan generado y lo ejecuta usando el LLM con herramientas."""
+    """Ejecuta los pasos del plan usando tools."""
 
     # El mensaje para el nodo ejecutor incluye el plan generado por el nodo planificador y el mensaje original del usuario
     messages = [
@@ -152,13 +153,14 @@ def should_use_tools(state: PlannerState) -> str:
 # ═══════════════════════════════════════════════════════════
 # NODO 3: REFLECT  (reflexiona sobre el plan)
 # ═══════════════════════════════════════════════════════════
-NODO_REFLECT_PROMPT = """
-Evalua esta respuesta desde el analisis academico.
-1. Se completo todos los pasos del plan?
-2. La informacion es coherente con los datos consultados?
-3. Es util y clara para el dictamen academico?.
-Responde SOLO con "APROBADO" si el plan fue exitoso, o "CORREGIR" si falta información e indicar que falta.
-"""
+NODO_REFLECT_PROMPT = (
+            "Evalúa esta respuesta de un análisis académico:\n"
+            "1) ¿Completó todos los pasos del plan?\n"
+            "2) ¿La información es coherente con los datos consultados?\n"
+            "3) ¿Es clara y útil como dictamen académico?\n\n"
+            "Si todo está bien, responde: APROBADO\n"
+            "Si falta algo, responde: CORREGIR: [qué falta]"
+        )
 def reflection_node(state: PlannerState)-> dict:
     """ El nodo de reflexión recibe la respuesta del nodo ejecutor y evalúa si el plan fue exitoso o si se necesitan ajustes."""
     last_response = state["messages"][-1].content
