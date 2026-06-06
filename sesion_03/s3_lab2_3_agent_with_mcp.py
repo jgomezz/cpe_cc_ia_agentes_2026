@@ -9,6 +9,14 @@ from mcp import ClientSession
 from mcp import StdioServerParameters
 from mcp.client.stdio import stdio_client
 from langchain_mcp_adapters.tools import load_mcp_tools
+from model import get_llm
+from langchain.agents import create_agent
+
+SYSTEM_PROMPT = """
+        Eres un asistente académico que ayuda a estudiantes con información sobre sus carreras, normativas y procedimientos. 
+        Usa las tools disponibles para consultar datos de estudiantes y buscar normativas relevantes. 
+        Responde de manera clara y precisa, guiando al estudiante en sus consultas académicas.
+        """          
 
 
 async def main():
@@ -31,8 +39,24 @@ async def main():
             for t in tools:
                 print(f"   • {t.name}")
 
+            # Crear el agente con las tools MCP
+            llm = get_llm("ollama")
 
+            agent = create_agent(
+                            llm,
+                            tools=tools,
+                            system_prompt=SYSTEM_PROMPT)
+                                           
+
+            result = await agent.ainvoke(
+                {"messages": [("human", "Necesito los datos del estudiante T20231.")]},
+                {"recursion_limit": 15},
+            )
+
+            print(f"🤖 {result['messages'][-1].content}")
 
 
 if __name__ == "__main__":
+    
+    # Ejecutar la función principal asincrónica
     asyncio.run(main())

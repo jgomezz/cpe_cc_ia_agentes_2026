@@ -29,10 +29,10 @@ def normalizar(texto: str) -> str:
 # ═══════════════════════════════════════════════════════════
 ESTUDIANTES = {
     "T20231": {
-        "nombre":     "María Quispe",
+        "nombre":     "María Quispe Gomez",
         "carrera":    "Desarrollo de Software",
         "ciclo":      3,
-        "promedio":   16.0,
+        "promedio":   17.0,
         "asistencia": "95%",
         "estado":     "Regular",
     },
