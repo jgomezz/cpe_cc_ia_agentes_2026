@@ -83,12 +83,13 @@ class PlannerState(TypedDict):
 # NODO 1: PLAN  (descompone la tarea)
 # ═══════════════════════════════════════════════════════════
 NODO_PLAN_PROMPT = """
-Eres un planificador experto en tareas académicas. 
-descompones la tarea del usuario en 3 pasos.
+Eres un planificador academico de Institución Educativa. 
+descompones la tarea del usuario en 3 pasos concretos.
 Sigue un formato exacto:
-Paso 1: [paso]
-Paso 2: [paso]
-Paso 3: [paso]
+PLAN:
+1. [paso]
+2. [paso]
+3. [paso]
 Responde SOLO con el plan, sin explicaciones adicionales.
 """
 
@@ -105,6 +106,7 @@ def planner_node(state: PlannerState)-> dict:
     reponse = llm.invoke(messages)
 
     plan = reponse.content
+    print(f"\n  📋 PLAN GENERADO:\n{plan}\n")
 
     return {
         "plan": plan,
@@ -117,13 +119,11 @@ def planner_node(state: PlannerState)-> dict:
 # NODO 2: EXECUTE  (ejecuta el plan)
 # ═══════════════════════════════════════════════════════════
 NODO_EXECUTE_PROMPT = """
-Eres un ejecutor de tareas académicas. 
-Ejecuta el plan generado por el nodo planificador.
-Usa las tools disponibles
+Ejecuta el plan paso a paso. Usa :
 - consultar_estudiante : para obtener datos del alumno
 - consultar_normativa : para obtener normativas académicas
 - calculadora : para cálculos matemáticos
-Al final, da una respuesta completa con conclusiones y recomendaciones para el estudiante.
+Al final, da una respuesta completa con conclusiones.
 """
 
 def executor_node(state: PlannerState)-> dict:
@@ -153,10 +153,10 @@ def should_use_tools(state: PlannerState) -> str:
 # NODO 3: REFLECT  (reflexiona sobre el plan)
 # ═══════════════════════════════════════════════════════════
 NODO_REFLECT_PROMPT = """
-Eres un reflexionador de tareas académicas, evalua la respuesta del nodo ejecutor.
+Evalua esta respuesta desde el analisis academico.
 1. Se completo todos los pasos del plan?
-2. La respuesta es clara y útil para un decision academica?
-3. Si la respuesta es incompleta o confusa, sugiere ajustes al plan.
+2. La informacion es coherente con los datos consultados?
+3. Es util y clara para el dictamen academico?.
 Responde SOLO con "APROBADO" si el plan fue exitoso, o "CORREGIR" si falta información e indicar que falta.
 """
 def reflection_node(state: PlannerState)-> dict:
@@ -216,7 +216,11 @@ print(agent.get_graph().draw_mermaid())
 if __name__ == "__main__":
     # Simular una consulta académica compleja
     
-    tarea = ("Analiza la situación académica del estudiante T20233.")
+    tarea = (
+        "Analiza la situación académica del estudiante T20233. "
+        "Compara sus datos con la normativa de riesgo académico y "
+        "determina qué acciones debe tomar Coordinación."
+    )
 
     result = agent.invoke({"messages": [("human", tarea)]})
 
