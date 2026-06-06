@@ -20,6 +20,7 @@ from model import get_llm
 from langgraph.prebuilt import ToolNode
 from typing import Annotated, TypedDict
 from langgraph.graph.message import add_messages
+from langchain_core.messages import SystemMessage, HumanMessage
 
 
 # ═══════════════════════════════════════════════════════════
@@ -77,16 +78,49 @@ class PlannerState(TypedDict):
     plan: str
     reflection: str
 
-# ═══════════════════════════════════════════════════════════
-# GRAFO: PLAN → EXECUTE ↔ TOOLS → REFLECT
-# ═══════════════════════════════════════════════════════════
 
-def planner_node(state)-> dict:
-    pass
+# ═══════════════════════════════════════════════════════════
+# NODO 1: PLAN  (descompone la tarea)
+# ═══════════════════════════════════════════════════════════
+PLAN_PROMPT = """
+Eres un planificador experto en tareas académicas. 
+descompones la tarea del usuario en 3 pasos.
+Sigue un formato exacto:
+Paso 1: [paso]
+Paso 2: [paso]
+Paso 3: [paso]
+Responde SOLO con el plan, sin explicaciones adicionales.
+"""
 
+def planner_node(state: PlannerState)-> dict:
+    """El nodo planificador recibe el mensaje del usuario y genera un plan de acción."""
+    
+    user_message = state["messages"][-1].content
+
+    reponse = llm.invoke([
+            SystemMessage(content=PLAN_PROMPT),
+            HumanMessage(content=user_message),
+
+    ])
+
+    plan = reponse.content
+
+    return {
+        "plan": plan,
+        "messages": HumanMessage(content=f"Ejecuta este plan : \n{plan} \n\n Tarea solicitada es : {user_message}")
+    }
+
+
+
+# ═══════════════════════════════════════════════════════════
+# NODO 2: EXECUTE  (ejecuta el plan)
+# ═══════════════════════════════════════════════════════════
 def executor_node(state)-> dict:
     pass
 
+# ═══════════════════════════════════════════════════════════
+# NODO 3: REFLECT  (reflexiona sobre el plan)
+# ═══════════════════════════════════════════════════════════
 def reflection_node(state)-> dict:
     pass
 
@@ -101,7 +135,9 @@ def should_use_tools(state: PlannerState) -> str:
 def route_after_reflection(state: PlannerState) -> str:
     return "end" if state.get("reflection") == "approved" else "executor"
 
-
+# ═══════════════════════════════════════════════════════════
+# GRAFO: PLAN → EXECUTE ↔ TOOLS → REFLECT
+# ═══════════════════════════════════════════════════════════
 graph = StateGraph(PlannerState)
 
 graph.add_node("planner",  planner_node)
@@ -123,4 +159,8 @@ graph.add_conditional_edges("reflect", route_after_reflection, {
 
 # El agente planificador con límite de recursión para evitar loops infinitos
 agent = graph.compile().with_config({"recursion_limit": 25})
+
+# ═══════════════════════════════════════════════════════════
+# VISUALIZAR GRAFO
+# ═══════════════════════════════════════════════════════════
 print(agent.get_graph().draw_mermaid())
