@@ -16,3 +16,6 @@ qdrant-client
 # sesion 03
 fastmcp
 langchain-mcp-adapters
+
+# sesion 04 
+fastapi
