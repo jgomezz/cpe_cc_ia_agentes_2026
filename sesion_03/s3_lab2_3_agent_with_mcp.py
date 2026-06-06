@@ -47,16 +47,31 @@ async def main():
                             tools=tools,
                             system_prompt=SYSTEM_PROMPT)
                                            
-
+            '''
             result = await agent.ainvoke(
                 {"messages": [("human", "Necesito los datos del estudiante T20231.")]},
                 {"recursion_limit": 15},
             )
 
             print(f"🤖 {result['messages'][-1].content}")
+            '''
+
+            result = await agent.ainvoke(
+                {"messages": [("human", "¿Cuáles son los requisitos de la beca Institución Educativa?")]},
+                {"recursion_limit": 15},
+            )
+
+            # Mostrar las tools usadas (didáctico)
+            print(60*"-")
+            for msg in result["messages"]:
+                if hasattr(msg, "tool_calls") and msg.tool_calls:
+                    for tc in msg.tool_calls:
+                        print(f"  🔧 {tc['name']}({str(tc['args'])[:60]})")
+
+            print(f"🤖 {result['messages'][-1].content}")
 
 
 if __name__ == "__main__":
-    
+
     # Ejecutar la función principal asincrónica
     asyncio.run(main())
