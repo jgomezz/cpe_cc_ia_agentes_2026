@@ -1,10 +1,20 @@
 from pydantic import BaseModel
 from fastapi import FastAPI
 import uvicorn
-
-
 from model import get_llm
 from langchain.agents import create_agent
+
+'''
+
+curl -X POST http://localhost:8000/chat \
+        -H "Content-Type: application/json" \
+        -d '{"message": "Dame un programa en Python para calcular el area de un triangulo"}'
+
+curl -X POST http://localhost:8000/chat/stream \
+        -H "Content-Type: application/json" \
+        -d '{"message": "Dame un programa en Python para calcular el area de un triangulo"}'
+
+'''
 
 
 # ════════════════════════════════════════════════════════════
@@ -54,6 +64,46 @@ async def chat(request: ChatRequest) -> ChatResponse:
         thread_id=request.thread_id,
         tools_used=list(set(tools_used)),
     )
+
+
+# ════════════════════════════════════════════════════════════
+# 2. STREAMING
+# ════════════════════════════════════════════════════════════
+
+from fastapi.responses import StreamingResponse
+from langchain_core.messages import AIMessageChunk
+
+class ChatStreamRequest(BaseModel):
+    message: str
+    thread_id: str = "default"
+
+
+@app.post("/chat/stream")
+async def chat_stream(body: ChatStreamRequest):
+    def generar():
+
+        # config es el diccionario de configuracion del agente
+        config = {
+            "configurable": {"thread_id": body.thread_id},
+            "recursion_limit": 15,
+        }
+
+        # stream_mode="messages" es el modo de streaming que devuelve el agente
+        result =agent.stream(
+            {"messages": [("human", body.message)]},
+            config,
+            stream_mode="messages",
+        )
+
+        # result es un generator que devuelve tuplas de (chunk, _)
+        for chunk, _ in result:
+            if isinstance(chunk, AIMessageChunk) and chunk.content:
+                yield chunk.content
+
+    return StreamingResponse(generar(), media_type="text/plain")
+
+
+
 
 # ════════════════════════════════════════════════════════════
 # 3. EJECUTAR
