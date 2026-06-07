@@ -66,7 +66,7 @@ tools = [consultar_estudiante, consultar_normativa, calculadora]
 # LLM
 # ═══════════════════════════════════════════════════════════
 
-llm = get_llm("openai")
+llm = get_llm("ollama")
 llm_with_tools = llm.bind_tools(tools)
 
 
@@ -84,7 +84,7 @@ class PlannerState(TypedDict):
 # ═══════════════════════════════════════════════════════════
 NODO_PLAN_PROMPT = """
 Eres un planificador academico de Institución Educativa. 
-descompones la tarea del usuario en 3 pasos concretos.
+descompones la tarea del usuario en 3 a 5 pasos concretos.
 Sigue un formato exacto:
 PLAN:
 1. [paso]
@@ -153,14 +153,15 @@ def should_use_tools(state: PlannerState) -> str:
 # ═══════════════════════════════════════════════════════════
 # NODO 3: REFLECT  (reflexiona sobre el plan)
 # ═══════════════════════════════════════════════════════════
-NODO_REFLECT_PROMPT = (
-            "Evalúa esta respuesta de un análisis académico:\n"
-            "1) ¿Completó todos los pasos del plan?\n"
-            "2) ¿La información es coherente con los datos consultados?\n"
-            "3) ¿Es clara y útil como dictamen académico?\n\n"
-            "Si todo está bien, responde: APROBADO\n"
-            "Si falta algo, responde: CORREGIR: [qué falta]"
-        )
+NODO_REFLECT_PROMPT = """ 
+    Evalúa esta respuesta de un análisis académico:
+    1. ¿Completó todos los pasos del plan?
+    2. ¿La información es coherente con los datos consultados?
+    3. ¿Es clara y útil como dictamen académico?
+
+    Si todo está bien, responde: APROBADO
+    Si falta algo, responde: CORREGIR: [qué falta]
+"""
 def reflection_node(state: PlannerState)-> dict:
     """ El nodo de reflexión recibe la respuesta del nodo ejecutor y evalúa si el plan fue exitoso o si se necesitan ajustes."""
     last_response = state["messages"][-1].content

@@ -231,3 +231,6 @@ if prompt:
                     "content": error_msg,
                 })
                 logging.error(f"thread={thread_id} | ERROR: {e}")
+
+
+
